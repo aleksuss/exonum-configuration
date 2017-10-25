@@ -77,7 +77,7 @@ pub struct PublicConfigApi {
 impl PublicConfigApi {
     fn get_actual_config(&self) -> Result<ApiResponseConfigHashInfo, ApiError> {
 
-        let actual_cfg = Schema::new(&self.blockchain.snapshot()).actual_configuration();
+        let actual_cfg = Schema::new(self.blockchain.snapshot()).actual_configuration();
         let res = ApiResponseConfigHashInfo {
             hash: actual_cfg.hash(),
             config: actual_cfg,
@@ -87,7 +87,7 @@ impl PublicConfigApi {
 
     fn get_following_config(&self) -> Result<Option<ApiResponseConfigHashInfo>, ApiError> {
 
-        let following_cfg = Schema::new(&self.blockchain.snapshot()).following_configuration();
+        let following_cfg = Schema::new(self.blockchain.snapshot()).following_configuration();
         let res = following_cfg.map(|cfg| {
             ApiResponseConfigHashInfo {
                 hash: cfg.hash(),
@@ -105,8 +105,8 @@ impl PublicConfigApi {
         let configuration_schema = ConfigurationSchema::new(&snapshot);
         let propose = configuration_schema.propose_data_by_config_hash().get(hash);
         let res = ApiResponseConfigInfo {
-            committed_config: committed_config,
-            propose: propose,
+            committed_config,
+            propose,
         };
         Ok(res)
     }
@@ -148,8 +148,7 @@ impl PublicConfigApi {
         previous_cfg_hash_filter: Option<Hash>,
         actual_from_filter: Option<Height>,
     ) -> Result<Vec<ApiResponseProposeHashInfo>, ApiError> {
-        let snapshot = self.blockchain.snapshot();
-        let configuration_schema = ConfigurationSchema::new(&snapshot);
+        let configuration_schema = ConfigurationSchema::new(self.blockchain.snapshot());
         let index = configuration_schema.config_hash_by_ordinal();
         let proposes = {
             index
@@ -178,7 +177,7 @@ impl PublicConfigApi {
                 .map(|(cfg_hash, propose_data)| {
                     ApiResponseProposeHashInfo {
                         hash: cfg_hash,
-                        propose_data: propose_data,
+                        propose_data,
                     }
                 })
                 .collect::<Vec<_>>()
@@ -191,8 +190,7 @@ impl PublicConfigApi {
         previous_cfg_hash_filter: Option<Hash>,
         actual_from_filter: Option<Height>,
     ) -> Result<Vec<ApiResponseConfigHashInfo>, ApiError> {
-        let snapshot = self.blockchain.snapshot();
-        let general_schema = Schema::new(&snapshot);
+        let general_schema = Schema::new(self.blockchain.snapshot());
         let index = general_schema.configs_actual_from();
         let committed_configs = {
             index
@@ -263,8 +261,8 @@ where
         let ch = self.channel.clone();
         ch.send(Box::new(config_propose))?;
         let res = ApiResponseProposePost {
-            tx_hash: tx_hash,
-            cfg_hash: cfg_hash,
+            tx_hash,
+            cfg_hash,
         };
         Ok(res)
     }
@@ -274,7 +272,7 @@ where
         let tx_hash = config_vote.hash();
         let ch = self.channel.clone();
         ch.send(Box::new(config_vote))?;
-        let res = ApiResponseVotePost { tx_hash: tx_hash };
+        let res = ApiResponseVotePost { tx_hash };
         Ok(res)
     }
 }

@@ -362,7 +362,7 @@ fn test_get_config_by_hash2() {
     let expected_body = {
         let expected_hash = {
             let mut fork = MemoryDB::new().fork();
-            let mut hashes = ProofListIndex::new(Vec::new(), &mut fork);
+            let mut hashes = ProofListIndex::new("index_name", &mut fork);
             for _ in 0..api_sandbox.sandbox.n_validators() {
                 hashes.push(ZEROVOTE.clone());
             }
@@ -447,7 +447,7 @@ fn test_get_config_by_hash3() {
     let expected_body = {
         let expected_hash = {
             let mut fork = MemoryDB::new().fork();
-            let mut hashes = ProofListIndex::new(Vec::new(), &mut fork);
+            let mut hashes = ProofListIndex::new("index_name", &mut fork);
             hashes.extend(votes);
             hashes.root_hash()
         };

@@ -64,10 +64,10 @@ fn generate_config_with_message(
     );
     StoredConfiguration {
         previous_cfg_hash: prev_cfg_hash,
-        actual_from: actual_from,
+        actual_from,
         validator_keys: sandbox.nodes_keys(),
         consensus: sandbox.cfg().consensus,
-        services: services,
+        services,
     }
 }
 
